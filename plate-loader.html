@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Plate Loader">
+<meta name="theme-color" content="#17181B">
+<title>Plate Loader</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: #17181B; color: #EDEBE6;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    padding: env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 48px);
+    min-height: 100vh;
+  }
+  .container { max-width: 760px; margin: 0 auto; padding: 28px 16px; }
+  .eyebrow { font-size: 11px; letter-spacing: 4px; color: #8E8B84; font-weight: 700; margin-bottom: 6px; }
+  h1 { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase;
+       font-family: 'Arial Narrow','Helvetica Neue',sans-serif; margin-bottom: 22px; }
+  .controls { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 8px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .label { font-size: 11px; letter-spacing: 2px; color: #8E8B84; font-weight: 700; text-transform: uppercase; }
+  .row { display: flex; gap: 6px; align-items: center; }
+  button {
+    font-family: inherit; cursor: pointer;
+    background: #232529; color: #EDEBE6; border: 1px solid #34373d; border-radius: 8px;
+  }
+  .step-btn { padding: 10px 14px; font-size: 15px; font-weight: 700; }
+  input[type=number] {
+    width: 92px; padding: 10px 12px; font-size: 22px; font-weight: 800; text-align: center;
+    background: #232529; color: #EDEBE6; border: 1px solid #34373d; border-radius: 8px; outline: none;
+    font-family: inherit;
+  }
+  .bar-btn { padding: 10px 14px; font-size: 15px; font-weight: 700; color: #9c9a94; }
+  .bar-btn.active { background: #EDEBE6; color: #17181B; border-color: #EDEBE6; }
+  .stage { background: #1D1F23; border: 1px solid #2b2e33; border-radius: 14px; padding: 8px 8px 20px; margin-top: 16px; }
+  .bar-wrap { display: flex; align-items: center; justify-content: center; min-height: 180px; padding: 16px 8px; overflow-x: auto; }
+  .sleeve-end { width: 5px; height: 22px; background: #6d727a; flex-shrink: 0; }
+  .sleeve { display: flex; align-items: center; gap: 1px; min-width: 48px; height: 16px; background: #8b9099; padding: 0 3px; }
+  .collar { width: 9px; height: 26px; background: #757a82; flex-shrink: 0; }
+  .shaft { flex: 1 1 120px; min-width: 90px; max-width: 340px; height: 10px; background: #9aa0a8; position: relative; }
+  .knurl { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(0,0,0,0.25); }
+  .plate {
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .plate span {
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+    font-family: 'Arial Narrow','Helvetica Neue',sans-serif; user-select: none;
+  }
+  .readout { text-align: center; padding: 0 12px; }
+  .readout-main { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+  .readout-num { font-size: 44px; font-weight: 800; font-family: 'Arial Narrow',sans-serif; letter-spacing: -1px; }
+  .readout-unit { font-size: 13px; color: #8E8B84; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+  .readout-sub { margin-top: 4px; font-size: 15px; color: #B9B6AF; }
+  .warn {
+    margin-top: 12px; padding: 10px 14px; background: rgba(200,50,43,0.12);
+    border: 1px solid rgba(200,50,43,0.4); border-radius: 8px; font-size: 13.5px; color: #F0A9A4; text-align: center;
+  }
+  .inv-section { margin-top: 20px; }
+  .inv-toggle { background: none; border: none; color: #EDEBE6; font-size: 15px; font-weight: 700;
+                letter-spacing: 1px; padding: 6px 0; text-transform: uppercase; }
+  .inv-grid { display: none; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .inv-grid.open { display: flex; }
+  .inv-row { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+             background: #1D1F23; border: 1px solid #2b2e33; border-radius: 10px; padding: 8px 12px; flex-wrap: wrap; }
+  .inv-row.disabled { opacity: 0.45; }
+  .inv-check { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .inv-check input { width: 18px; height: 18px; }
+  .swatch { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px;
+            border-radius: 50%; font-weight: 800; font-size: 13px; border: 2px solid rgba(255,255,255,0.15); }
+  .inv-controls { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .qty-btn { width: 36px; height: 36px; font-size: 16px; font-weight: 700; }
+  .qty-num { width: 26px; text-align: center; font-weight: 800; font-size: 16px; display: inline-block; }
+  .type-toggle { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid #34373d; }
+  .type-btn { padding: 8px 12px; font-size: 12.5px; font-weight: 700; color: #9c9a94; border: none; border-radius: 0; letter-spacing: 0.5px; }
+  .type-btn.active { background: #EDEBE6; color: #17181B; }
+  .inv-hint { font-size: 12px; color: #77746e; padding: 2px 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="eyebrow">PLATE LOADER</div>
+  <h1>Load the bar.</h1>
+
+  <div class="controls">
+    <div class="field">
+      <div class="label">Target weight (lb)</div>
+      <div class="row">
+        <button class="step-btn" id="minus5">&minus;5</button>
+        <input type="number" inputmode="decimal" id="target" value="225">
+        <button class="step-btn" id="plus5">+5</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="label">Bar</div>
+      <div class="row" id="barRow"></div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="bar-wrap" id="barWrap"></div>
+    <div class="readout" id="readout"></div>
+  </div>
+
+  <div class="inv-section">
+    <button class="inv-toggle" id="invToggle">&#9656; Available plates</button>
+    <div class="inv-grid" id="invGrid"></div>
+  </div>
+</div>
+
+<script>
+// ---------- Plate definitions ----------
+const PLATE_DEFS = [
+  { w: 55,  bumper: "#C8322B" },
+  { w: 45,  bumper: "#2456A6" },
+  { w: 35,  bumper: "#E8B62C" },
+  { w: 25,  bumper: "#2E7D46" },
+  { w: 15,  bumper: "#2B2B2B" },
+  { w: 10,  bumper: "#E8E4DC" },
+  { w: 5,   bumper: "#3E4A5A" },
+  { w: 2.5, bumper: "#5A5A5A" },
+];
+const METAL = "#4A4E55";
+const BARS = [45, 35, 33, 15];
+
+function plateVisual(w, type) {
+  if (type === "bumper") {
+    const h = w >= 25 ? 140 : w >= 10 ? 126 : w >= 5 ? 80 : 62;
+    const t = w >= 45 ? 17 : w >= 35 ? 15 : w >= 25 ? 13 : w >= 10 ? 11 : 8;
+    return { h, t };
+  }
+  const h = w >= 45 ? 132 : w >= 35 ? 118 : w >= 25 ? 102 : w >= 10 ? 80 : w >= 5 ? 66 : 52;
+  const t = w >= 45 ? 12 : w >= 25 ? 10 : w >= 10 ? 8 : 7;
+  return { h, t };
+}
+
+function shade(hex, pct) {
+  const n = parseInt(hex.slice(1), 16);
+  let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const adj = Math.round((pct / 100) * 255);
+  r = Math.min(255, Math.max(0, r + adj));
+  g = Math.min(255, Math.max(0, g + adj));
+  b = Math.min(255, Math.max(0, b + adj));
+  return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
+}
+
+// ---------- State (with persistence, guarded for environments without storage) ----------
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+
+let state = {
+  target: 225,
+  barWeight: 45,
+  inventory: {}
+};
+for (const d of PLATE_DEFS) {
+  state.inventory[d.w] = {
+    enabled: d.w !== 55,
+    count: d.w >= 45 ? 8 : d.w >= 25 ? 4 : d.w >= 5 ? 4 : 2,
+    type: "bumper"
+  };
+}
+(function restore() {
+  const saved = store.get("plateLoaderState");
+  if (!saved) return;
+  try {
+    const s = JSON.parse(saved);
+    if (s && typeof s === "object") {
+      if (typeof s.target === "number") state.target = s.target;
+      if (BARS.includes(s.barWeight)) state.barWeight = s.barWeight;
+      if (s.inventory) for (const k in state.inventory) if (s.inventory[k]) state.inventory[k] = s.inventory[k];
+    }
+  } catch (e) {}
+})();
+function persist() { store.set("plateLoaderState", JSON.stringify(state)); }
+
+// ---------- Loading algorithm ----------
+function solveLoad(target, barWeight, inventory) {
+  const perSide = (target - barWeight) / 2;
+  if (perSide < 0) return { plates: [], underBar: true };
+  let remaining = perSide;
+  const plates = [];
+  for (const def of PLATE_DEFS) {
+    const inv = inventory[def.w];
+    if (!inv || !inv.enabled) continue;
+    let pairsAvail = Math.floor(inv.count / 2);
+    while (pairsAvail > 0 && def.w <= remaining + 1e-9) {
+      plates.push({ w: def.w, type: inv.type });
+      remaining -= def.w;
+      pairsAvail--;
+    }
+  }
+  return { plates, perSide, loaded: perSide - remaining, exact: Math.abs(remaining) < 1e-9, remaining, underBar: false };
+}
+
+// ---------- Rendering ----------
+const el = (tag, cls, html) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html !== undefined) e.innerHTML = html;
+  return e;
+};
+
+function renderPlate(p) {
+  const { h, t } = plateVisual(p.w, p.type);
+  const def = PLATE_DEFS.find(d => d.w === p.w);
+  const color = p.type === "bumper" ? def.bumper : METAL;
+  const light = p.type === "bumper" && p.w === 10;
+  const d = el("div", "plate");
+  d.style.cssText = `width:${t}px;height:${h}px;background:${color};border:1px solid ${shade(color, -30)}`;
+  const s = el("span", "", String(p.w));
+  s.style.color = light ? "#333" : "rgba(255,255,255,0.85)";
+  d.appendChild(s);
+  d.title = `${p.w} lb ${p.type}`;
+  return d;
+}
+
+function renderBar(plates) {
+  const wrap = document.getElementById("barWrap");
+  wrap.innerHTML = "";
+  const sleeveL = el("div", "sleeve"), sleeveR = el("div", "sleeve");
+  [...plates].reverse().forEach(p => sleeveL.appendChild(renderPlate(p)));
+  plates.forEach(p => sleeveR.appendChild(renderPlate(p)));
+  const shaft = el("div", "shaft");
+  const k1 = el("div", "knurl"), k2 = el("div", "knurl");
+  k1.style.left = "18%"; k2.style.right = "18%";
+  shaft.append(k1, k2);
+  wrap.append(el("div","sleeve-end"), sleeveL, el("div","collar"), shaft, el("div","collar"), sleeveR, el("div","sleeve-end"));
+}
+
+function render() {
+  const target = Number(state.target) || 0;
+  const result = solveLoad(target, state.barWeight, state.inventory);
+  const readout = document.getElementById("readout");
+
+  // bar buttons
+  const barRow = document.getElementById("barRow");
+  barRow.innerHTML = "";
+  BARS.forEach(b => {
+    const btn = el("button", "bar-btn" + (state.barWeight === b ? " active" : ""), String(b));
+    btn.onclick = () => { state.barWeight = b; persist(); render(); };
+    barRow.appendChild(btn);
+  });
+
+  document.getElementById("target").value = state.target;
+
+  if (result.underBar) {
+    document.getElementById("barWrap").innerHTML = "";
+    readout.innerHTML = `<div class="warn">Target is below the bar weight &mdash; the empty bar is ${state.barWeight} lb.</div>`;
+    return;
+  }
+
+  renderBar(result.plates);
+  const totalOnBar = state.barWeight + result.loaded * 2;
+  const perSideText = result.plates.map(p => p.w).join(" + ") || "empty bar";
+  let html = `
+    <div class="readout-main">
+      <span class="readout-num">${round1(totalOnBar)}</span>
+      <span class="readout-unit">lb on the bar</span>
+    </div>
+    <div class="readout-sub">Per side: ${perSideText}</div>`;
+  if (!result.exact) {
+    html += `<div class="warn">Closest load with your plates &mdash; ${round1(result.remaining)} lb short per side (${round1(result.remaining*2)} lb total). Check inventory below.</div>`;
+  }
+  readout.innerHTML = html;
+}
+
+function round1(n) { return Math.round(n * 10) / 10; }
+
+function renderInventory() {
+  const grid = document.getElementById("invGrid");
+  grid.innerHTML = "";
+  PLATE_DEFS.forEach(d => {
+    const inv = state.inventory[d.w];
+    const row = el("div", "inv-row" + (inv.enabled ? "" : " disabled"));
+
+    const check = el("label", "inv-check");
+    const cb = document.createElement("input");
+    cb.type = "checkbox"; cb.checked = inv.enabled;
+    cb.onchange = () => { inv.enabled = cb.checked; persist(); render(); renderInventory(); };
+    const sw = el("span", "swatch", String(d.w));
+    sw.style.background = inv.type === "bumper" ? d.bumper : METAL;
+    sw.style.color = (inv.type === "bumper" && d.w === 10) ? "#333" : "#fff";
+    check.append(cb, sw);
+
+    const controls = el("div", "inv-controls");
+    const qty = el("div", "row");
+    const minus = el("button", "qty-btn", "&minus;");
+    const num = el("span", "qty-num", String(inv.count));
+    const plus = el("button", "qty-btn", "+");
+    minus.onclick = () => { inv.count = Math.max(0, inv.count - 2); persist(); render(); renderInventory(); };
+    plus.onclick = () => { inv.count += 2; persist(); render(); renderInventory(); };
+    qty.append(minus, num, plus);
+
+    const toggle = el("div", "type-toggle");
+    const bBtn = el("button", "type-btn" + (inv.type === "bumper" ? " active" : ""), "Bounce");
+    const mBtn = el("button", "type-btn" + (inv.type === "metal" ? " active" : ""), "Metal");
+    bBtn.onclick = () => { inv.type = "bumper"; persist(); render(); renderInventory(); };
+    mBtn.onclick = () => { inv.type = "metal"; persist(); render(); renderInventory(); };
+    toggle.append(bBtn, mBtn);
+
+    controls.append(qty, toggle);
+    row.append(check, controls);
+    grid.appendChild(row);
+  });
+  grid.appendChild(el("div", "inv-hint", "Counts are total plates (pairs load two at a time)."));
+}
+
+// ---------- Wiring ----------
+document.getElementById("target").addEventListener("input", e => {
+  state.target = e.target.value === "" ? "" : Number(e.target.value);
+  persist();
+  render();
+});
+document.getElementById("minus5").onclick = () => {
+  state.target = Math.max(state.barWeight, (Number(state.target) || 0) - 5);
+  persist(); render();
+};
+document.getElementById("plus5").onclick = () => {
+  state.target = (Number(state.target) || 0) + 5;
+  persist(); render();
+};
+document.getElementById("invToggle").onclick = () => {
+  const grid = document.getElementById("invGrid");
+  grid.classList.toggle("open");
+  document.getElementById("invToggle").innerHTML =
+    (grid.classList.contains("open") ? "&#9662;" : "&#9656;") + " Available plates";
+};
+
+renderInventory();
+render();
+</script>
+</body>
+</html>
