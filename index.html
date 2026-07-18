@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17181B">
+<title>Strength Tools</title>
+<style>
+:root{color-scheme:dark;--bg:#111317;--panel:#1b1e24;--line:#2b3039;--text:#f1efe9;--muted:#9ba1ac}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+main{max-width:900px;margin:auto;padding:48px 18px 80px}.eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);font-weight:800}
+h1{font-size:clamp(38px,8vw,72px);line-height:.95;margin:12px 0 16px;letter-spacing:-.055em}.intro{max-width:620px;color:#c5c9d0;line-height:1.6;font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:34px}
+.card{display:block;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;min-height:210px;transition:.18s transform,.18s border-color}
+.card:hover{transform:translateY(-3px);border-color:#596172}.icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;font-size:24px;margin-bottom:30px}
+.plate{background:#2f80ed22;color:#6ca9ff}.profile{background:#18a87522;color:#49d7a2}.card h2{margin:0 0 8px;font-size:24px}.card p{margin:0;color:var(--muted);line-height:1.5}.arrow{float:right;color:#707887;font-size:24px}
+footer{margin-top:34px;color:#727987;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Strength Tools</div>
+  <h1>Train with<br>better numbers.</h1>
+  <p class="intro">Two focused tools for loading the bar and understanding your performance across strength, cardio, and body composition.</p>
+  <section class="grid">
+    <a class="card" href="plate-loader.html">
+      <span class="arrow">↗</span><div class="icon plate">◉</div>
+      <h2>Plate Loader</h2><p>Enter a target weight and see exactly which plates to load on each side.</p>
+    </a>
+    <a class="card" href="performance-grader/">
+      <span class="arrow">↗</span><div class="icon profile">◆</div>
+      <h2>Performance Profile</h2><p>Grade the powerlifts, one-mile run, and waist circumference against sourced standards.</p>
+    </a>
+  </section>
+  <footer>Data stays in your browser. These tools are informational, not medical advice.</footer>
+</main>
+</body>
+</html>
