@@ -300,7 +300,7 @@ function renderInventory() {
     qty.append(minus, num, plus);
 
     const toggle = el("div", "type-toggle");
-    const bBtn = el("button", "type-btn" + (inv.type === "bumper" ? " active" : ""), "Bounce");
+    const bBtn = el("button", "type-btn" + (inv.type === "bumper" ? " active" : ""), "Bumper");
     const mBtn = el("button", "type-btn" + (inv.type === "metal" ? " active" : ""), "Metal");
     bBtn.onclick = () => { inv.type = "bumper"; persist(); render(); renderInventory(); };
     mBtn.onclick = () => { inv.type = "metal"; persist(); render(); renderInventory(); };
