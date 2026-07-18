@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Performance Profile">
+<meta name="theme-color" content="#111317">
+<title>Performance Profile</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <a class="back" href="../">← Strength Tools</a>
+    <div class="unit-toggle" aria-label="Units">
+      <button id="imperialBtn" class="active" type="button">LB / IN</button>
+      <button id="metricBtn" type="button">KG / CM</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Performance Profile</div>
+      <h1>Know where<br>you stand.</h1>
+      <p>Compare your three powerlifts, one-mile run, and waist circumference with age-, sex-, and bodyweight-relevant reference data.</p>
+    </div>
+    <div class="legend" aria-label="Grade legend">
+      <span style="background:#3b82f622;color:#78a9ff">Average</span>
+      <span style="background:#22c55e22;color:#66dc89">Good</span>
+      <span style="background:#a855f722;color:#cc8ff9">Great</span>
+      <span style="background:#f59e0b22;color:#ffc65a">Elite</span>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="panel-title"><h2>Profile</h2><small>Stored only on this device</small></div>
+    <div class="form-grid">
+      <div class="field"><label for="sex">Sex</label><select id="sex"><option value="male">Male</option><option value="female">Female</option></select></div>
+      <div class="field"><label for="age">Age</label><input id="age" type="number" min="18" max="100" step="1" value="55"></div>
+      <div class="field"><label for="weight">Bodyweight <span class="weightUnit">lb</span></label><input id="weight" type="number" min="1" step="0.1" value="202"></div>
+      <div class="field"><label for="waist">Waist <span class="waistUnit">in</span></label><input id="waist" type="number" min="1" step="0.1" value="36"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title"><h2>Performance</h2><small>Enter current or recent bests</small></div>
+    <div class="form-grid">
+      <div class="field"><label for="squat">Squat 1RM <span class="weightUnit">lb</span></label><input id="squat" type="number" min="0" step="1" value="350"></div>
+      <div class="field"><label for="bench">Bench 1RM <span class="weightUnit">lb</span></label><input id="bench" type="number" min="0" step="1" value="255"></div>
+      <div class="field"><label for="deadlift">Deadlift 1RM <span class="weightUnit">lb</span></label><input id="deadlift" type="number" min="0" step="1" value="345"></div>
+      <div class="field"><label>One-mile time</label><div class="time-row"><input id="mileMin" aria-label="Mile minutes" type="number" min="2" max="30" step="1" value="9"><input id="mileSec" aria-label="Mile seconds" type="number" min="0" max="59" step="1" value="0"></div></div>
+    </div>
+    <div class="action-row">
+      <button class="primary" id="calculateBtn" type="button">Calculate profile</button>
+      <button class="secondary" id="clearBtn" type="button">Clear saved data</button>
+      <span class="status" id="status">Strength tables load from the sourced public API and are cached locally.</span>
+    </div>
+  </section>
+
+  <div id="results" class="hidden">
+    <section class="summary">
+      <div class="score-card overall"><div class="score-label">Overall performance</div><div class="score-num" id="overallScore">—</div><div id="overallGrade"></div></div>
+      <div class="score-card"><div class="score-label">Strength</div><div class="score-num" id="strengthScore">—</div><div id="strengthGrade"></div></div>
+      <div class="score-card"><div class="score-label">Cardio</div><div class="score-num" id="cardioScore">—</div><div id="cardioGrade"></div></div>
+      <div class="score-card"><div class="score-label">Body composition</div><div class="score-num" id="bodyScore">—</div><div id="bodyGrade"></div></div>
+    </section>
+    <div id="healthNotice" class="notice hidden"></div>
+    <section class="events" id="eventGrid"></section>
+  </div>
+
+  <section class="panel sources">
+    <b>How grading works.</b> Strength uses raw competition percentiles by sex and powerlifting weight class. The mile uses age grading. Waist uses national same-sex/age percentiles; lower is better. Category scores are normalized to a common 0–100 scale, then Strength, Cardio, and Body Composition receive equal weight in the overall result.
+    <br><br>
+    <a href="SOURCES.md">Read methodology and source documentation</a> ·
+    <a href="https://fitnessvolt.com/strength-standards/" target="_blank" rel="noopener">Powered by FitnessVolt</a>
+  </section>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
