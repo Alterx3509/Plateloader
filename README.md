@@ -1,5 +1,7 @@
 # Strength Tools
 
+**Live web app:** https://alterx3509.github.io/Plateloader/
+
 A small static-web collection containing:
 
 - `plate-loader.html` — plate-loading calculator
