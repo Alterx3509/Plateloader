@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b0b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Trophy Tracker" />
+  <meta name="description" content="A mobile-first trophy tracker for the Ultimate Waterfowlers Challenge and future hunting challenges." />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+  <title>Trophy Tracker — UWC</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">TROPHY TRACKER</div>
+        <h1>Ultimate Waterfowlers Challenge</h1>
+      </div>
+      <button class="icon-button" id="installButton" aria-label="Install app" hidden>⇩</button>
+    </header>
+
+    <main id="app" aria-live="polite"></main>
+
+    <nav class="bottom-nav" aria-label="Primary navigation">
+      <button class="nav-item active" data-view="challenge"><span>🏆</span><small>Challenge</small></button>
+      <button class="nav-item" data-view="trophies"><span>🦆</span><small>Trophy Room</small></button>
+      <button class="nav-item" data-view="hunts"><span>📅</span><small>Hunts</small></button>
+      <button class="nav-item" data-view="profile"><span>👤</span><small>Profile</small></button>
+    </nav>
+  </div>
+
+  <dialog id="trophyDialog" class="sheet-dialog">
+    <form method="dialog" class="sheet" id="trophyForm">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow" id="detailDivision"></div>
+          <h2 id="detailSpecies">Species</h2>
+        </div>
+        <button class="close-button" value="cancel" aria-label="Close">×</button>
+      </div>
+
+      <div class="photo-hero" id="photoHero">
+        <div class="photo-placeholder" id="photoPlaceholder">🦆</div>
+        <img id="primaryPhoto" alt="Trophy photo" hidden />
+      </div>
+
+      <div class="segmented" id="statusSegment">
+        <button type="button" data-status="not-harvested">Not harvested</button>
+        <button type="button" data-status="harvested">Harvested</button>
+        <button type="button" data-status="certified">Certified</button>
+      </div>
+
+      <div class="form-grid">
+        <label>Date
+          <input type="date" id="trophyDate" />
+        </label>
+        <label>Sex
+          <select id="trophySex">
+            <option value="">Not entered</option>
+            <option value="drake">Drake / Male</option>
+            <option value="hen">Hen / Female</option>
+            <option value="unknown">Unknown</option>
+          </select>
+        </label>
+      </div>
+
+      <label>Location
+        <input type="text" id="trophyLocation" placeholder="County, state, province, or general location" />
+      </label>
+
+      <label>Notes
+        <textarea id="trophyNotes" rows="4" placeholder="The story, who you hunted with, outfitter, conditions, or anything you want to remember…"></textarea>
+      </label>
+
+      <div class="photo-actions">
+        <label class="primary-button file-button">Add photo
+          <input type="file" id="photoInput" accept="image/*" capture="environment" multiple hidden />
+        </label>
+        <button type="button" class="secondary-button" id="removePhotosButton">Remove photos</button>
+      </div>
+
+      <div class="thumb-strip" id="photoStrip"></div>
+
+      <section class="rule-card" id="ruleCard"></section>
+
+      <button type="submit" class="primary-button wide">Save trophy</button>
+    </form>
+  </dialog>
+
+  <dialog id="huntDialog" class="sheet-dialog">
+    <form method="dialog" class="sheet" id="huntForm">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head"><h2>Add hunt</h2><button class="close-button" value="cancel">×</button></div>
+      <label>Hunt name<input id="huntName" placeholder="Virginia Marsh Hunt" required /></label>
+      <div class="form-grid">
+        <label>Date<input id="huntDate" type="date" required /></label>
+        <label>Location<input id="huntLocation" placeholder="Accomack County, VA" /></label>
+      </div>
+      <label>Notes<textarea id="huntNotes" rows="4" placeholder="Weather, partners, guide, memories…"></textarea></label>
+      <button class="primary-button wide" type="submit">Save hunt</button>
+    </form>
+  </dialog>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
