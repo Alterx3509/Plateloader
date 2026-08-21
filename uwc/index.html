@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0c0d" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Trophy Tracker" />
+  <meta name="description" content="A mobile-first trophy and hunting challenge tracker. First challenge: Ultimate Waterfowlers Challenge." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Trophy Tracker</title>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">FIELD COLLECTION</div>
+        <h1>Trophy Tracker</h1>
+      </div>
+      <button id="installBtn" class="icon-btn hidden" aria-label="Install app" title="Install app">＋</button>
+    </header>
+    <main id="screen" class="screen" aria-live="polite"></main>
+    <nav class="bottom-nav" aria-label="Primary">
+      <button class="nav-btn active" data-screen="challenges"><span>🏆</span><small>Challenges</small></button>
+      <button class="nav-btn" data-screen="trophies"><span>🦆</span><small>Trophy Room</small></button>
+      <button class="nav-btn" data-screen="hunts"><span>▣</span><small>Hunts</small></button>
+      <button class="nav-btn" data-screen="profile"><span>●</span><small>Profile</small></button>
+    </nav>
+  </div>
+  <div id="modalRoot"></div>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
