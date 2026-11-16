@@ -22,3 +22,14 @@ test('500 deterministic inventories match exhaustive optimum and minimum count',
   visit(0,0,0);const result=solve(target,45,inventory);assert.equal(result.loaded,best);assert.equal(result.plates.length,min);
  }
 });
+test('typing renders results without rewriting decimal input or caret',()=>{
+ const field={value:'47.'},nodes={target:field,barRow:{innerHTML:''},readout:{innerHTML:''},barWrap:{innerHTML:''}};
+ const context={state:{target:47,barWeight:45,inventory:{}},BARS:[],solveLoad:()=>({underBar:true}),document:{getElementById:id=>nodes[id]}};
+ vm.createContext(context);
+ vm.runInContext(html.slice(html.indexOf('function render('),html.indexOf('function round1(')),context);
+ context.render({syncTarget:false});assert.equal(field.value,'47.');
+ context.render();assert.equal(field.value,47);
+ const inputHandler=html.slice(html.indexOf('document.getElementById("target").addEventListener'),html.indexOf('document.getElementById("minus5").onclick'));
+ assert.match(inputHandler,/render\(\{ syncTarget: false \}\)/);
+ assert.match(html,/<input[^>]*step="any"[^>]*id="target"/);
+});
