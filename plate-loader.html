@@ -185,19 +185,38 @@ function persist() { store.set("plateLoaderState", JSON.stringify(state)); }
 function solveLoad(target, barWeight, inventory) {
   const perSide = (target - barWeight) / 2;
   if (perSide < 0) return { plates: [], underBar: true };
-  let remaining = perSide;
-  const plates = [];
+  // Bounded knapsack: maximize load without exceeding the target, then
+  // minimize the number of plates. Integer 2.5 lb units avoid rounding drift.
+  const unit = 2.5;
+  const limit = Math.max(0, Math.floor((perSide + 1e-9) / unit));
+  const reachable = new Map([[0, []]]);
   for (const def of PLATE_DEFS) {
     const inv = inventory[def.w];
-    if (!inv || !inv.enabled) continue;
-    let pairsAvail = Math.floor(inv.count / 2);
-    while (pairsAvail > 0 && def.w <= remaining + 1e-9) {
-      plates.push({ w: def.w, type: inv.type });
-      remaining -= def.w;
-      pairsAvail--;
+    if (!inv || !inv.enabled || !Number.isFinite(inv.count)) continue;
+    const weight = Math.round(def.w / unit);
+    let pairs = Math.min(Math.max(0, Math.floor(inv.count / 2)), Math.floor(limit / weight));
+    // Split inventory into binary bundles so large counts do not require
+    // one pass per plate. Each bundle can be used at most once.
+    for (let size = 1; pairs > 0; size *= 2) {
+      const count = Math.min(size, pairs);
+      pairs -= count;
+      const bundleWeight = weight * count;
+      for (const [sum, chosen] of Array.from(reachable)) {
+        const next = sum + bundleWeight;
+        if (next > limit) continue;
+        const previous = reachable.get(next);
+        if (!previous || chosen.length + count < previous.length) {
+          reachable.set(next, chosen.concat(Array.from({ length: count }, () => ({ w: def.w, type: inv.type }))));
+        }
+      }
     }
   }
-  return { plates, perSide, loaded: perSide - remaining, exact: Math.abs(remaining) < 1e-9, remaining, underBar: false };
+  let best = 0;
+  for (const sum of reachable.keys()) if (sum > best) best = sum;
+  const plates = reachable.get(best).slice().sort((a, b) => b.w - a.w);
+  const loaded = best * unit;
+  const remaining = perSide - loaded;
+  return { plates, perSide, loaded, exact: Math.abs(remaining) < 1e-9, remaining, underBar: false };
 }
 
 // ---------- Rendering ----------
