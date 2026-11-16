@@ -92,7 +92,7 @@
       <div class="label">Target weight (lb)</div>
       <div class="row">
         <button class="step-btn" id="minus5">&minus;5</button>
-        <input type="number" inputmode="decimal" id="target" value="225">
+        <input type="number" inputmode="decimal" step="any" id="target" value="225">
         <button class="step-btn" id="plus5">+5</button>
       </div>
     </div>
@@ -254,7 +254,7 @@ function renderBar(plates) {
   wrap.append(el("div","sleeve-end"), sleeveL, el("div","collar"), shaft, el("div","collar"), sleeveR, el("div","sleeve-end"));
 }
 
-function render() {
+function render({ syncTarget = true } = {}) {
   const target = Number(state.target) || 0;
   const result = solveLoad(target, state.barWeight, state.inventory);
   const readout = document.getElementById("readout");
@@ -268,7 +268,8 @@ function render() {
     barRow.appendChild(btn);
   });
 
-  document.getElementById("target").value = state.target;
+  // Preserve the browser's editing buffer (e.g. "47.") and caret while typing.
+  if (syncTarget) document.getElementById("target").value = state.target;
 
   if (result.underBar) {
     document.getElementById("barWrap").innerHTML = "";
@@ -336,7 +337,7 @@ function renderInventory() {
 document.getElementById("target").addEventListener("input", e => {
   state.target = e.target.value === "" ? "" : Number(e.target.value);
   persist();
-  render();
+  render({ syncTarget: false });
 });
 document.getElementById("minus5").onclick = () => {
   state.target = Math.max(state.barWeight, (Number(state.target) || 0) - 5);
